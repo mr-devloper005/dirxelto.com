@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowUpRight } from 'lucide-react'
+import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
 import { globalContent } from '@/editable/content/global.content'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
+
+
 
 export function EditableFooter() {
   const taskLinks = SITE_CONFIG.tasks.filter((task) => task.enabled)
@@ -13,45 +15,61 @@ export function EditableFooter() {
 
   return (
     <footer className="border-t border-[var(--editable-border)] bg-[var(--editable-footer-bg)] text-[var(--editable-footer-text)]">
-      <div className="h-[2px] bg-[linear-gradient(90deg,transparent_0%,var(--slot4-accent)_50%,transparent_100%)]" />
-      <div className="mx-auto grid max-w-[var(--editable-container)] gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr] lg:px-8">
+      <div className="mx-auto grid w-full max-w-[var(--editable-container)] gap-12 px-6 py-20 sm:px-10 sm:py-24 lg:grid-cols-[1.4fr_0.8fr_0.8fr_0.9fr] lg:px-16">
         <div>
-          <Link href="/" className="inline-flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center border border-[var(--slot4-accent)]/40 bg-[var(--slot4-surface-bg)]">
-              <img src="/favicon.png?v=20260413" alt={SITE_CONFIG.name} className="h-8 w-8 object-contain" />
-            </span>
-            <span className="editable-display text-xl font-semibold tracking-[0.01em]">{SITE_CONFIG.name}</span>
+          <Link href="/" className="editable-display-serif text-2xl font-normal tracking-[-0.01em]">
+            {SITE_CONFIG.name}
           </Link>
-          <p className="mt-4 max-w-md text-sm leading-7 text-[var(--slot4-muted-text)]">{globalContent.footer?.description || SITE_CONFIG.description}</p>
+          <p className="mt-6 max-w-xs text-sm leading-[1.7] text-[var(--slot4-muted-text)]">
+            {globalContent.footer?.description || SITE_CONFIG.description}
+          </p>
+          
         </div>
 
         <div>
-          <h3 className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[var(--slot4-accent)]">Explore</h3>
-          <div className="mt-4 grid gap-2">
-            {taskLinks.map((task) => (
-              <Link key={task.key} href={task.route} className="inline-flex items-center gap-2 text-sm font-medium text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">
-                {task.label} <ArrowUpRight className="h-3.5 w-3.5" />
-              </Link>
-            ))}
+          
+          
+        </div>
+
+        <div>
+          <h3 className="editable-mono text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--slot4-muted-text)]">
+            Resources
+          </h3>
+          <div className="mt-6 grid gap-3">
+            <Link href="/about" className="text-sm text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">About</Link>
+            <Link href="/contact" className="text-sm text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">Contact</Link>
+            <Link href="/search" className="text-sm text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">Search</Link>
+            <Link href="/create" className="text-sm text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">Submit</Link>
           </div>
         </div>
 
         <div>
-          <h3 className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[var(--slot4-accent)]">Site</h3>
-          <div className="mt-4 grid gap-2">
-            {[
-              ['About', '/about'],
-              ['Contact', '/contact'],
-              ...(session ? [['Create', '/create']] : [['Login', '/login'], ['Sign up', '/signup']]),
-            ].map(([label, href]) => (
-              <Link key={href} href={href} className="text-sm font-medium text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">{label}</Link>
-            ))}
-            {session ? <button type="button" onClick={logout} className="text-left text-sm font-medium text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">Logout</button> : null}
+          <h3 className="editable-mono text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--slot4-muted-text)]">
+            Account
+          </h3>
+          <div className="mt-6 grid gap-3">
+            {session ? (
+              <>
+                <span className="text-sm text-[var(--slot4-muted-text)]">Signed in as {session.name}</span>
+                <button type="button" onClick={logout} className="w-fit text-left text-sm text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-sm text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">Sign in</Link>
+                <Link href="/signup" className="text-sm text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)]">Get started</Link>
+              </>
+            )}
           </div>
         </div>
       </div>
-      <div className="border-t border-[var(--editable-border)] px-4 py-5 text-center text-xs font-medium tracking-[0.12em] text-[var(--slot4-muted-text)]">
-        © {year} {SITE_CONFIG.name}. All rights reserved.
+
+      <div className="border-t border-[var(--editable-border)] px-6 py-6 sm:px-10 lg:px-16">
+        <div className="mx-auto flex w-full max-w-[var(--editable-container)] flex-col items-center justify-between gap-3 text-xs text-[var(--slot4-muted-text)] sm:flex-row">
+          <span>© {year} {SITE_CONFIG.name}. All rights reserved.</span>
+          <span>{globalContent.footer?.bottomNote}</span>
+        </div>
       </div>
     </footer>
   )

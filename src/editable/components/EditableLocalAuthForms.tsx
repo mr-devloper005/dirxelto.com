@@ -2,7 +2,9 @@
 
 import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { AlertCircle, CheckCircle2 } from 'lucide-react'
 import { pagesContent } from '@/editable/content/pages.content'
+import { editableDesignContract as dc } from '@/editable/layouts/design-contract'
 
 const USERS_KEY = 'slot4:local-auth-users'
 const SESSION_KEY = 'slot4:local-auth-session'
@@ -31,8 +33,13 @@ const saveSession = (user: Pick<LocalUser, 'name' | 'email'>) => {
   window.dispatchEvent(new Event('slot4-auth-change'))
 }
 
-const inputClass = 'h-12 w-full rounded-lg border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] px-4 text-sm font-medium text-[var(--slot4-page-text)] outline-none transition placeholder:text-[var(--slot4-muted-text)] focus:border-[var(--slot4-accent)]'
-const buttonClass = 'inline-flex h-12 w-full items-center justify-center rounded-lg bg-[var(--slot4-accent)] px-6 text-sm font-bold text-[var(--slot4-on-accent)] transition hover:brightness-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60'
+const inputClass = 'h-12 w-full rounded-lg border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] px-4 text-sm font-medium text-[var(--slot4-page-text)] outline-none transition focus:border-[var(--slot4-accent)] focus:ring-4 focus:ring-[var(--slot4-accent-soft)] placeholder:text-[var(--slot4-soft-muted-text)]'
+const labelClass = 'grid gap-2 text-sm font-semibold text-[var(--slot4-page-text)]'
+const buttonClass = `${dc.button.primary} w-full`
+const messageClass = (status: 'idle' | 'success' | 'error') =>
+  `flex items-start gap-2.5 rounded-lg px-4 py-3 text-sm font-semibold ${
+    status === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-[var(--slot4-accent-soft)] text-[var(--slot4-accent)]'
+  }`
 
 export function EditableLocalLoginForm() {
   const router = useRouter()
@@ -58,9 +65,20 @@ export function EditableLocalLoginForm() {
 
   return (
     <form className="mt-6 grid gap-4" onSubmit={submit}>
-      <input className={inputClass} type="email" placeholder="Email address" value={email} onChange={(event) => setEmail(event.target.value)} required />
-      <input className={inputClass} type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} required />
-      {message ? <p className={`rounded-lg px-4 py-3 text-sm font-semibold ${status === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-[var(--slot4-accent-soft)] text-[var(--slot4-accent)]'}`}>{message}</p> : null}
+      <label className={labelClass}>
+        Email address
+        <input className={inputClass} type="email" placeholder="you@example.com" value={email} onChange={(event) => setEmail(event.target.value)} required />
+      </label>
+      <label className={labelClass}>
+        Password
+        <input className={inputClass} type="password" placeholder="••••••••" value={password} onChange={(event) => setPassword(event.target.value)} required />
+      </label>
+      {message ? (
+        <p className={messageClass(status)}>
+          {status === 'success' ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />}
+          <span>{message}</span>
+        </p>
+      ) : null}
       <button type="submit" className={buttonClass}>{pagesContent.auth.login.submitLabel}</button>
     </form>
   )
@@ -99,10 +117,24 @@ export function EditableLocalSignupForm() {
 
   return (
     <form className="mt-6 grid gap-4" onSubmit={submit}>
-      <input className={inputClass} placeholder="Full name" value={name} onChange={(event) => setName(event.target.value)} required />
-      <input className={inputClass} type="email" placeholder="Email address" value={email} onChange={(event) => setEmail(event.target.value)} required />
-      <input className={inputClass} type="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} required />
-      {message ? <p className={`rounded-lg px-4 py-3 text-sm font-semibold ${status === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-[var(--slot4-accent-soft)] text-[var(--slot4-accent)]'}`}>{message}</p> : null}
+      <label className={labelClass}>
+        Full name
+        <input className={inputClass} placeholder="Jordan Blake" value={name} onChange={(event) => setName(event.target.value)} required />
+      </label>
+      <label className={labelClass}>
+        Email address
+        <input className={inputClass} type="email" placeholder="you@example.com" value={email} onChange={(event) => setEmail(event.target.value)} required />
+      </label>
+      <label className={labelClass}>
+        Password
+        <input className={inputClass} type="password" placeholder="At least 4 characters" value={password} onChange={(event) => setPassword(event.target.value)} required />
+      </label>
+      {message ? (
+        <p className={messageClass(status)}>
+          {status === 'success' ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />}
+          <span>{message}</span>
+        </p>
+      ) : null}
       <button type="submit" className={buttonClass}>{pagesContent.auth.signup.submitLabel}</button>
     </form>
   )

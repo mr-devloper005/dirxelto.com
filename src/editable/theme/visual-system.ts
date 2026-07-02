@@ -1,6 +1,7 @@
 import { slot4BrandConfig } from './brand.config'
 
 export type Slot4VisualPreset =
+  | 'premium-directory'
   | 'editorial-paper'
   | 'luxury-atelier'
   | 'brutalist-index'
@@ -10,6 +11,20 @@ export type Slot4VisualPreset =
   | 'visual-gallery'
 
 export const visualPresets = {
+  'premium-directory': {
+    label: 'Premium Directory',
+    mood: 'confident, editorial, contained',
+    fontDirection: 'Plus Jakarta Sans headlines with Fraunces italic emphasis, Inter body',
+    colors: {
+      background: '#faf8f3',
+      foreground: '#1a1712',
+      muted: '#6f6759',
+      primary: '#1a1712',
+      accent: '#a8582e',
+      surface: '#ffffff',
+    },
+    shape: 'contained max-width, soft-shadow cards, rounded-top media, generous whitespace',
+  },
   'editorial-paper': {
     label: 'Editorial Paper',
     mood: 'calm magazine authority',
@@ -112,36 +127,36 @@ export const visualPresets = {
 
 export const visualSystem = {
   productKind: slot4BrandConfig.productKind,
-  recommendedPreset: 'tech-directory',
+  recommendedPreset: 'premium-directory',
   radius: {
-    sm: '0.75rem',
-    md: '1.25rem',
-    lg: '2rem',
-    xl: '2.75rem',
+    sm: '0.625rem',
+    md: '1rem',
+    lg: '1.5rem',
+    xl: '2.25rem',
   },
   motion: {
     pageLoad: 'animate-in fade-in slide-in-from-bottom-4 duration-700',
-    cardHover: 'transition duration-500 hover:-translate-y-1.5 hover:shadow-2xl',
+    cardHover: 'transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-2xl',
     softHover: 'transition duration-300 hover:opacity-85',
     reduceMotionSafe: 'motion-reduce:transform-none motion-reduce:transition-none',
   },
   typography: {
     eyebrow: 'text-xs font-semibold uppercase tracking-[0.24em]',
-    heroTitle: 'text-5xl font-semibold tracking-[-0.06em] sm:text-6xl lg:text-7xl',
-    sectionTitle: 'text-3xl font-semibold tracking-[-0.04em] sm:text-4xl',
+    heroTitle: 'text-5xl font-semibold leading-[1.05] tracking-[-0.03em] sm:text-6xl lg:text-[4.5rem]',
+    sectionTitle: 'text-3xl font-semibold tracking-[-0.02em] sm:text-4xl lg:text-[2.75rem]',
     body: 'text-base leading-8',
     caption: 'text-xs font-medium uppercase tracking-[0.18em]',
   },
   surfaces: {
     glass: 'border border-white/15 bg-white/10 backdrop-blur-xl',
-    paper: 'border border-black/10 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.08)]',
-    quiet: 'border border-black/10 bg-black/[0.03]',
+    paper: 'border border-black/[0.06] bg-white shadow-[0_30px_80px_-30px_rgba(26,23,18,0.18)]',
+    quiet: 'border border-black/[0.06] bg-black/[0.02]',
     dark: 'border border-white/10 bg-black/30 shadow-[0_24px_70px_rgba(0,0,0,0.25)]',
   },
   layout: {
-    page: 'mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8',
-    sectionY: 'py-12 sm:py-16 lg:py-20',
-    cardGrid: 'grid gap-5 sm:grid-cols-2 lg:grid-cols-3',
+    page: 'mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10',
+    sectionY: 'py-16 sm:py-24 lg:py-28',
+    cardGrid: 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3',
   },
 } as const
 
