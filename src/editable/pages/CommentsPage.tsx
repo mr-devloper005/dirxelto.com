@@ -104,7 +104,7 @@ export default function CommentsPage() {
                 Review comments saved in this browser from article pages.
               </p>
             </div>
-            <button type="button" className="rounded-full border border-[var(--editable-border)] px-4 py-2 text-sm font-black" onClick={refreshComments}>Refresh comments</button>
+            <button type="button" className="rounded-full border border-[var(--editable-border)] px-4 py-2 text-sm font-semibold" onClick={refreshComments}>Refresh comments</button>
           </div>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -157,8 +157,8 @@ export default function CommentsPage() {
           <div className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-sm text-muted-foreground">
             <span>Page {currentPage} of {totalPages}</span>
             <div className="flex gap-2">
-              <button type="button" className="rounded-full border border-[var(--editable-border)] px-4 py-2 font-black disabled:opacity-40" disabled={currentPage <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</button>
-              <button type="button" className="rounded-full border border-[var(--editable-border)] px-4 py-2 font-black disabled:opacity-40" disabled={currentPage >= totalPages} onClick={() => setPage((value) => Math.min(totalPages, value + 1))}>Next</button>
+              <button type="button" className="rounded-full border border-[var(--editable-border)] px-4 py-2 font-semibold disabled:opacity-40" disabled={currentPage <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</button>
+              <button type="button" className="rounded-full border border-[var(--editable-border)] px-4 py-2 font-semibold disabled:opacity-40" disabled={currentPage >= totalPages} onClick={() => setPage((value) => Math.min(totalPages, value + 1))}>Next</button>
             </div>
           </div>
         ) : null}

@@ -19,3 +19,8 @@ export const slot4TaskNotes = {
   listing: "Business listing pages and detail backlinks",
   image: "Image/gallery pages and detail backlinks",
 } satisfies Record<TaskKey, string>;
+
+export const slot4TaskLabels = {
+  listing: "Directories",
+  sbm: "Collections",
+} satisfies Partial<Record<TaskKey, string>>;
