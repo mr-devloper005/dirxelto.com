@@ -5,7 +5,17 @@ import { buildPageMetadata } from '@/lib/seo'
 import { fetchHomeTaskFeed, fetchHomeTimeSections, type HomeTimeSection } from '@/lib/task-data'
 import { pagesContent } from '@/editable/content/pages.content'
 import type { SitePost } from '@/lib/site-connector'
-import { EditableHomeCta, EditableHomeHero, EditableMagazineSplit, EditableStoryRail, EditableTimeCollections } from '@/editable/sections/HomeSections'
+import {
+  EditableBenefits,
+  EditableFeaturedShowcase,
+  EditableHomeCta,
+  EditableHomeHero,
+  EditableHowItWorks,
+  EditableMagazineSplit,
+  EditableStatsBand,
+  EditableStoryRail,
+  EditableTimeCollections,
+} from '@/editable/sections/HomeSections'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { Ads } from '@/lib/ads'
 export const revalidate = 300
@@ -53,17 +63,18 @@ export default async function HomePage() {
         }}
       />
       <EditableHomeHero primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
-      <div className="mx-auto max-w-6xl px-4 py-6">
-  <Ads slot="header" showLabel eager className="mx-auto w-full" />
-</div>
-
+      <EditableFeaturedShowcase primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
       <EditableStoryRail primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
+      <EditableStatsBand primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
       <EditableMagazineSplit primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
-
+      <EditableHowItWorks />
       <EditableTimeCollections primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
-      <div className="mx-auto max-w-6xl px-4 py-6">
-  <Ads slot="sidebar" showLabel eager className="mx-auto w-full" />
-</div>
+      <EditableBenefits />
+      <section className="border-t border-[var(--editable-border)] bg-[var(--slot4-page-bg)]">
+        <div className="mx-auto max-w-[var(--editable-container)] px-6 py-10 sm:px-10 lg:px-16">
+          <Ads slot="header" showLabel eager className="mx-auto w-full" />
+        </div>
+      </section>
       <EditableHomeCta />
       </main>
     </EditableSiteShell>

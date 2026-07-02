@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowUpRight, BriefcaseBusiness, ChevronDown, Download, FileText, Globe, MapPin, Phone, Search, Star, UserRound } from 'lucide-react'
+import { ArrowUpRight, BriefcaseBusiness, ChevronDown, ChevronLeft, ChevronRight, Download, FileText, Globe, MapPin, Phone, Search, SlidersHorizontal, Star, UserRound, X } from 'lucide-react'
 import { buildTaskMetadata } from '@/lib/seo'
 import { CATEGORY_OPTIONS, normalizeCategory } from '@/lib/categories'
 import { fetchPaginatedTaskPosts, buildPostUrl } from '@/lib/task-data'
@@ -9,6 +9,13 @@ import { taskPageMetadata } from '@/config/site.content'
 import { taskPageVoices } from '@/editable/content/task-pages.content'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { getTaskTheme, taskThemeStyle } from '@/editable/theme/task-themes'
+import { EditableReveal } from '@/editable/shell/EditableReveal'
+import { editableDesignContract as dc } from '@/editable/layouts/design-contract'
+import { Ads, getSlotSizes } from '@/lib/ads'
+
+function pickRandom(sizes: string[]) {
+  return sizes[Math.floor(Math.random() * sizes.length)]
+}
 
 export const revalidate = 3
 
@@ -65,8 +72,9 @@ const taskGrid: Record<TaskKey, string> = {
   profile: 'grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
 }
 
-// Shared premium surface: hairline border, soft radius, smooth lift on hover.
-const cardBase = 'group block rounded-[var(--tk-radius)] border border-[var(--tk-line)] bg-[var(--tk-surface)] transition duration-500 hover:-translate-y-1.5 hover:shadow-[0_32px_72px_rgba(15,23,42,0.14)]'
+// Shared premium surface: hairline border, soft radius, smooth lift on hover —
+// mirrors dc.surface.card / dc.motion.lift, re-pointed to per-task `--tk-*` tokens.
+const cardBase = `group block rounded-[var(--tk-radius)] border border-[var(--tk-line)] bg-[var(--tk-surface)] ${dc.motion.lift}`
 
 export async function EditableTaskArchiveRoute({
   task,
@@ -99,64 +107,125 @@ export function TaskArchiveView({ task, posts, pagination, category, basePath }:
         <header className="relative overflow-hidden border-b border-[var(--tk-line)]">
           <div className="pointer-events-none absolute inset-x-0 -top-40 h-96 bg-[radial-gradient(60%_60%_at_50%_0%,var(--tk-glow),transparent_70%)]" />
           <div className="relative mx-auto max-w-[var(--editable-container)] px-6 py-20 sm:py-28 lg:px-8">
-            <div className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.34em] text-[var(--tk-accent)]">
-              <span>{theme.kicker}</span>
-              <span className="h-1 w-1 rounded-full bg-[var(--tk-accent)] opacity-50" />
-              <span className="text-[var(--tk-muted)]">{label}</span>
-            </div>
-            <h1 className="editable-display mt-6 max-w-3xl text-balance text-[2.5rem] font-semibold leading-[1.06] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
-              {voice?.headline || `Browse ${label}`}
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--tk-muted)]">{voice?.description || theme.note}</p>
-            {voice?.chips?.length ? (
-              <div className="mt-8 flex flex-wrap gap-2.5">
-                {voice.chips.map((chip) => (
-                  <span key={chip} className="rounded-full border border-[var(--tk-line)] bg-[var(--tk-surface)] px-3.5 py-1.5 text-xs font-medium text-[var(--tk-muted)]">{chip}</span>
-                ))}
+            <EditableReveal>
+              <div className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.34em] text-[var(--tk-accent)]">
+                <span>{theme.kicker}</span>
+                <span className="h-1 w-1 rounded-full bg-[var(--tk-accent)] opacity-50" />
+                <span className="font-medium text-[var(--tk-muted)]">{label}</span>
               </div>
-            ) : null}
-
-            <div className="mt-12 flex flex-col gap-4 border-t border-[var(--tk-line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-[var(--tk-muted)]">
-                <span className="font-semibold text-[var(--tk-text)]">{posts.length}</span> {posts.length === 1 ? 'post' : 'posts'} · {categoryLabel}
-              </p>
-              <form action={basePath} className="flex items-center gap-2.5">
-                <div className="relative">
-                  <select
-                    name="category"
-                    defaultValue={category}
-                    className="h-11 appearance-none rounded-full border border-[var(--tk-line)] bg-[var(--tk-surface)] pl-4 pr-10 text-sm font-medium text-[var(--tk-text)] outline-none transition focus:border-[var(--tk-accent)]"
-                    aria-label={voice?.filterLabel || 'Filter category'}
-                  >
-                    <option value="all">All categories</option>
-                    {CATEGORY_OPTIONS.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
-                  </select>
-                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--tk-muted)]" />
+              <h1 className="editable-display mt-6 max-w-3xl text-balance text-[2.5rem] font-semibold leading-[1.06] tracking-[-0.03em] sm:text-5xl lg:text-6xl">
+                {voice?.headline || `Browse ${label}`}
+              </h1>
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--tk-muted)]">{voice?.description || theme.note}</p>
+              {voice?.chips?.length ? (
+                <div className="mt-8 flex flex-wrap gap-2.5">
+                  {voice.chips.map((chip) => (
+                    <span key={chip} className="rounded-full border border-[var(--tk-line)] bg-[var(--tk-surface)] px-3.5 py-1.5 text-xs font-medium text-[var(--tk-muted)]">{chip}</span>
+                  ))}
                 </div>
-                <button className="inline-flex h-11 items-center rounded-full bg-[var(--tk-accent)] px-5 text-sm font-semibold text-[var(--tk-on-accent)] transition hover:opacity-90">Apply</button>
-              </form>
-            </div>
+              ) : null}
+            </EditableReveal>
+
+            <EditableReveal index={1}>
+              <div className="mt-12 flex flex-col gap-4 border-t border-[var(--tk-line)] pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-[var(--tk-muted)]">
+                  <span className="font-semibold text-[var(--tk-text)]">{posts.length}</span> {posts.length === 1 ? 'post' : 'posts'} · {categoryLabel}
+                </p>
+                <form action={basePath} className="flex items-center gap-2.5">
+                  <span className="hidden items-center gap-1.5 text-xs font-medium uppercase tracking-[0.18em] text-[var(--tk-muted)] sm:inline-flex">
+                    <SlidersHorizontal className="h-3.5 w-3.5" /> Filter
+                  </span>
+                  <div className="relative">
+                    <select
+                      name="category"
+                      defaultValue={category}
+                      className="h-11 appearance-none rounded-full border border-[var(--tk-line)] bg-[var(--tk-surface)] pl-4 pr-10 text-sm font-medium text-[var(--tk-text)] outline-none transition focus:border-[var(--tk-accent)]"
+                      aria-label={voice?.filterLabel || 'Filter category'}
+                    >
+                      <option value="all">All categories</option>
+                      {CATEGORY_OPTIONS.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
+                    </select>
+                    <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--tk-muted)]" />
+                  </div>
+                  <button className="inline-flex h-11 items-center rounded-full bg-[var(--tk-accent)] px-5 text-sm font-semibold text-[var(--tk-on-accent)] transition hover:opacity-90">Apply</button>
+                  {category !== 'all' ? (
+                    <Link href={basePath} className="inline-flex h-11 items-center gap-1 rounded-full border border-[var(--tk-line)] px-4 text-sm font-medium text-[var(--tk-muted)] transition hover:border-[var(--tk-accent)] hover:text-[var(--tk-text)]">
+                      <X className="h-3.5 w-3.5" /> Clear
+                    </Link>
+                  ) : null}
+                </form>
+              </div>
+            </EditableReveal>
           </div>
         </header>
 
         <section className="mx-auto max-w-[var(--editable-container)] px-6 py-16 sm:py-20 lg:px-8">
+          {task === 'sbm' ? (
+            <Ads slot="header" size={pickRandom(getSlotSizes('header'))} showLabel className="mb-8" />
+          ) : null}
+
           {posts.length ? (
             <div className={taskGrid[task]}>
-              {posts.map((post, index) => <ArchivePostCard key={post.id || post.slug} post={post} task={task} basePath={basePath} index={index} />)}
+              {task === 'listing' ? (
+                <>
+                  {posts.slice(0, 2).map((post, index) => (
+                    <EditableReveal key={post.id || post.slug} index={index}>
+                      <ArchivePostCard post={post} task={task} basePath={basePath} index={index} />
+                    </EditableReveal>
+                  ))}
+                  {posts.length > 2 ? (
+                    <div className="xl:col-span-2">
+                      <Ads slot="in-feed" size={pickRandom(getSlotSizes('in-feed'))} showLabel className="my-8" />
+                    </div>
+                  ) : null}
+                  {posts.slice(2).map((post, i) => {
+                    const index = i + 2
+                    return (
+                      <EditableReveal key={post.id || post.slug} index={index}>
+                        <ArchivePostCard post={post} task={task} basePath={basePath} index={index} />
+                      </EditableReveal>
+                    )
+                  })}
+                </>
+              ) : (
+                posts.map((post, index) => (
+                  <EditableReveal key={post.id || post.slug} index={index}>
+                    <ArchivePostCard post={post} task={task} basePath={basePath} index={index} />
+                  </EditableReveal>
+                ))
+              )}
             </div>
           ) : (
-            <div className="mx-auto max-w-xl rounded-[var(--tk-radius)] border border-dashed border-[var(--tk-line)] bg-[var(--tk-surface)] px-8 py-16 text-center">
-              <Search className="mx-auto h-7 w-7 text-[var(--tk-muted)]" />
-              <h2 className="editable-display mt-5 text-2xl font-semibold tracking-[-0.02em]">Nothing here yet</h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--tk-muted)]">Try another category, or check back after new {label.toLowerCase()} are published.</p>
-            </div>
+            <EditableReveal>
+              <div className="mx-auto max-w-xl rounded-[var(--tk-radius)] border border-dashed border-[var(--tk-line)] bg-[var(--tk-surface)] px-8 py-16 text-center">
+                <Search className="mx-auto h-7 w-7 text-[var(--tk-muted)]" />
+                <h2 className="editable-display mt-5 text-2xl font-semibold tracking-[-0.02em]">Nothing here yet</h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--tk-muted)]">Try another category, or check back after new {label.toLowerCase()} are published.</p>
+              </div>
+            </EditableReveal>
           )}
 
           {posts.length ? (
             <nav className="mt-16 flex items-center justify-center gap-3 text-sm">
-              {pagination.hasPrevPage ? <Link href={pageHref(basePath, category, page - 1)} className="rounded-full border border-[var(--tk-line)] px-5 py-2.5 font-medium transition hover:border-[var(--tk-accent)]">Previous</Link> : null}
-              <span className="rounded-full border border-[var(--tk-line)] bg-[var(--tk-surface)] px-5 py-2.5 font-medium text-[var(--tk-muted)]">Page {page} of {pagination.totalPages || 1}</span>
-              {pagination.hasNextPage ? <Link href={pageHref(basePath, category, page + 1)} className="rounded-full border border-[var(--tk-line)] px-5 py-2.5 font-medium transition hover:border-[var(--tk-accent)]">Next</Link> : null}
+              {pagination.hasPrevPage ? (
+                <Link href={pageHref(basePath, category, page - 1)} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--tk-line)] bg-[var(--tk-surface)] px-5 py-2.5 font-medium transition hover:border-[var(--tk-accent)] hover:text-[var(--tk-accent)]">
+                  <ChevronLeft className="h-4 w-4" /> Previous
+                </Link>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--tk-line)] px-5 py-2.5 font-medium text-[var(--tk-muted)] opacity-40">
+                  <ChevronLeft className="h-4 w-4" /> Previous
+                </span>
+              )}
+              <span className="rounded-full bg-[var(--tk-accent-soft)] px-5 py-2.5 font-semibold text-[var(--tk-accent)]">Page {page} of {pagination.totalPages || 1}</span>
+              {pagination.hasNextPage ? (
+                <Link href={pageHref(basePath, category, page + 1)} className="inline-flex items-center gap-1.5 rounded-full border border-[var(--tk-line)] bg-[var(--tk-surface)] px-5 py-2.5 font-medium transition hover:border-[var(--tk-accent)] hover:text-[var(--tk-accent)]">
+                  Next <ChevronRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--tk-line)] px-5 py-2.5 font-medium text-[var(--tk-muted)] opacity-40">
+                  Next <ChevronRight className="h-4 w-4" />
+                </span>
+              )}
             </nav>
           ) : null}
         </section>
@@ -185,7 +254,7 @@ function CardArrow({ label }: { label: string }) {
   )
 }
 
-// Yelp-style red star ratings. Prefers real rating/review fields, falls back to
+// Accent-colored star ratings. Prefers real rating/review fields, falls back to
 // a stable derived value so the UI always reads well (wire to real data later).
 const hashStr = (value: string) => {
   let h = 0
@@ -224,13 +293,13 @@ function ArticleArchiveCard({ post, href, index }: { post: SitePost; href: strin
   const category = getCategory(post, 'Article')
   return (
     <Link href={href} className={`${cardBase} overflow-hidden`}>
-      <div className="aspect-[16/10] overflow-hidden bg-[var(--tk-raised)]">
+      <div className={`${dc.media.frame} aspect-[16/10]`}>
         <img src={image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]" />
       </div>
       <div className="p-6 sm:p-7">
-        <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--tk-accent)]">
-          <span>{category}</span>
-          <span className="text-[var(--tk-muted)]">· No. {String(index + 1).padStart(2, '0')}</span>
+        <div className="flex items-center gap-2">
+          <span className={dc.type.eyebrow}>{category}</span>
+          <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-[var(--tk-muted)]">· No. {String(index + 1).padStart(2, '0')}</span>
         </div>
         <h2 className="editable-display mt-3 text-2xl font-semibold leading-snug tracking-[-0.02em]">{post.title}</h2>
         <RatingLine post={post} />
@@ -248,7 +317,7 @@ function ListingArchiveCard({ post, href }: { post: SitePost; href: string }) {
   const website = getField(post, ['website', 'url'])
   return (
     <Link href={href} className={`${cardBase} flex items-center gap-5 p-5 sm:p-6`}>
-      <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-[var(--tk-line)] bg-[var(--tk-raised)]">
+      <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[1rem] border border-[var(--tk-line)] bg-[var(--slot4-media-bg)]">
         {logo ? <img src={logo} alt="" className="h-full w-full object-cover" /> : <BriefcaseBusiness className="h-9 w-9 text-[var(--tk-muted)]" />}
       </div>
       <div className="min-w-0 flex-1">
@@ -274,7 +343,7 @@ function ClassifiedArchiveCard({ post, href }: { post: SitePost; href: string })
     <Link href={href} className={`${cardBase} flex flex-col p-6 sm:p-7`}>
       <div className="flex items-start justify-between gap-4">
         <span className="editable-display text-3xl font-semibold tracking-[-0.03em] text-[var(--tk-accent)]">{price || 'Open offer'}</span>
-        {condition ? <span className="rounded-full bg-[var(--tk-accent-soft)] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--tk-accent)]">{condition}</span> : null}
+        {condition ? <span className={dc.badge.accentPill}>{condition}</span> : null}
       </div>
       <h2 className="editable-display mt-5 text-xl font-semibold leading-snug tracking-[-0.02em]">{post.title}</h2>
       <RatingLine post={post} />
@@ -290,7 +359,7 @@ function ClassifiedArchiveCard({ post, href }: { post: SitePost; href: string })
 function ImageArchiveCard({ post, href, index }: { post: SitePost; href: string; index: number }) {
   const image = getImage(post)
   return (
-    <Link href={href} className="group mb-5 block break-inside-avoid overflow-hidden rounded-[var(--tk-radius)] border border-[var(--tk-line)] bg-[var(--tk-surface)] transition duration-300 hover:-translate-y-1">
+    <Link href={href} className={`group mb-5 block break-inside-avoid overflow-hidden rounded-[var(--tk-radius)] border border-[var(--tk-line)] bg-[var(--tk-surface)] ${dc.motion.lift}`}>
       <div className={`relative overflow-hidden ${index % 3 === 0 ? 'aspect-[3/4]' : 'aspect-[4/3]'}`}>
         <img src={image} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(0,0,0,0.78))] opacity-80 transition group-hover:opacity-100" />
@@ -311,7 +380,7 @@ function BookmarkArchiveCard({ post, href, index }: { post: SitePost; href: stri
         <Globe className="h-5 w-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-[var(--tk-muted)]">Saved · {String(index + 1).padStart(2, '0')}</span>
+        <span className={dc.badge.pill}>Saved · {String(index + 1).padStart(2, '0')}</span>
         <h2 className="editable-display mt-1.5 text-lg font-semibold leading-snug tracking-[-0.02em]">{post.title}</h2>
         <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--tk-muted)]">{getSummary(post)}</p>
         {website ? <p className="mt-3 truncate text-xs font-medium text-[var(--tk-accent)]">{cleanDomain(website)}</p> : null}
@@ -326,7 +395,7 @@ function PdfArchiveCard({ post, href }: { post: SitePost; href: string }) {
     <Link href={href} className={`${cardBase} flex flex-col p-6 sm:p-7`}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--tk-accent-soft)] text-[var(--tk-accent)]"><FileText className="h-6 w-6" /></div>
-        <span className="rounded-full border border-[var(--tk-line)] px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--tk-muted)]">{category}</span>
+        <span className={dc.badge.pill}>{category}</span>
       </div>
       <h2 className="editable-display mt-6 text-xl font-semibold leading-snug tracking-[-0.02em]">{post.title}</h2>
       <RatingLine post={post} />
@@ -341,7 +410,7 @@ function ProfileArchiveCard({ post, href }: { post: SitePost; href: string }) {
   const role = getField(post, ['role', 'designation', 'company', 'location'])
   return (
     <Link href={href} className={`${cardBase} flex flex-col items-center p-7 text-center`}>
-      <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-[var(--tk-line)] bg-[var(--tk-raised)]">
+      <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border border-[var(--tk-line)] bg-[var(--slot4-media-bg)]">
         {avatar ? <img src={avatar} alt="" className="h-full w-full object-cover" /> : <UserRound className="h-10 w-10 text-[var(--tk-muted)]" />}
       </div>
       <h2 className="editable-display mt-5 text-lg font-semibold tracking-[-0.02em]">{post.title}</h2>
