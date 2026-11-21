@@ -345,17 +345,6 @@ function ListingDetail({ post, related }: { post: SitePost; related: SitePost[] 
               </EditableReveal>
             ) : null}
 
-            {mapSrc ? (
-              <EditableReveal index={3} className="mt-14 border-t border-[var(--tk-line)] pt-10">
-                <p className="editable-mono text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--tk-muted)]">Location</p>
-                <h3 className="editable-display-serif mt-4 text-2xl font-normal tracking-[-0.01em] text-[var(--tk-text)] sm:text-3xl">
-                  Find them on the map
-                </h3>
-                <div className="mt-8 overflow-hidden rounded-3xl border border-[var(--tk-line)]">
-                  <iframe src={mapSrc} title={address || 'Map'} loading="lazy" className="h-[420px] w-full border-0" />
-                </div>
-              </EditableReveal>
-            ) : null}
           </article>
 
           {/* Sticky premium sidebar */}
